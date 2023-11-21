@@ -1,0 +1,10 @@
+Can you write a summary of the above conversation?
+
+What troubleshooting steps were suggested to the customer to fix their issue?
+
+Was the customer able to login after they tried resetting the password by themselves?
+
+What is the overall sentiment and sentiment score of the conversation between the customer and the agent?
+
+Identify any specific words, phrases, or context that influenced the positive sentiment
+

@@ -1,0 +1,24 @@
+Customer: Hi there, I'm having a problem with my account.
+Agent: Hi! I'm sorry to hear that. What's happening?
+Customer: I am not able to login to my account and also not able to use my debit card. I have tried resetting my password but the issue persists.
+Agent: Hmm, that's not good. Let's try some troubleshooting steps. Can you go to the website and try resetting the password from there and see if you get password reset email and try following the steps from there?
+Customer: Ok, i tried it and received the password reset mail. I have reset my password but the login still fails.
+Agent: Okay, from your login history i can see you tried few times last week and your account got locked out. You also tried few incorrect pin attempts on your debit card and that is how your debit card also got blocked. Can you confirm if you performed these actions?
+Customer: I did try to login multiple times and failed. but i did not use my debit card at all last week.
+Agent: Alright, can you confirm the last debit card transaction you did with the card?
+Customer: Okay, I used the card for buying groceries last week and did a purchase of around USD 50.
+Agent: Okay, i can see that in my system as well but then i see 4 failed debit card usage attempts somewhere in eastern europe over the last 4 days. Was that you?
+Customer: No that was not me.
+Agent: I see. It looks like you had an unauthorized usage on your card. I am going to permanently block your card and issue you a new one.
+Customer: Do I need to come to bank branch to get the new card?
+Agent: No, You will receive it by mail in next few days. Your debit card pin will be mailed separately to you.
+Customer: Okay, and what about the login issue?
+Agent: Let me reset your credentials from the backend. since your debit card was compromised, your account might also be at risk. So i am going to reset your account credentials. from the backend.
+Customer: How long will it take to get my new debit card and login credentials?
+Agent: For the debit card, It depends on the speed of mail delivery. but it usually takes up to 5 business days for both debit card and pin to arrive at your address.
+Customer: And what about new login credentials?
+Agent: Within next hour, you will receive an email on your registered email id with new login credentials. It will have your temporary password and link to login. Upon clicking the link, you will be asked to put in your temporary password. Then the page will force you to create a new password. As soon you enter a new password, your new credentials will active immediately for use.
+Customer: Alright, thanks for your help.
+Agent: No problem, happy to help. Is there anything else I can assist you with?
+Customer: No, that's all for now.
+Agent: Alright, have a great day and thanks for banking with us!

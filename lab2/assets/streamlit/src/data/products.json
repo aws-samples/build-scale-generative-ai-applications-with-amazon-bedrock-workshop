@@ -1,0 +1,61 @@
+{
+    "products": [
+        {
+            "id": "L001",
+            "Name": "Unsecured Installment Loan",
+            "Title": "Lending Solutions for Accomplishing Your Goals:",
+            "Description": "An Unsecured Installment Loan from FNB1 can provide you with the borrowing power you need to meet your financial objectives. These loans are repaid over a set time frame (term) with a specific number of payments.",
+            "Key Features": [
+                "Borrow anywhere from $2,500 - $25,000",
+                "One-time, lump-sum distribution of loan proceeds",
+                "Fixed repayment schedule",
+                "Available with a fixed rate",
+                "Interest rate discount available when you set up automatic monthly payments from an FNB Deposit account",
+                "Flexible repayment terms"
+            ],
+            "Key Benefits": [
+                "Immediate spending power",
+                "Flexible and convenient payment methods including by mail, in-branch, online or automatic debit from your deposit account"
+            ],
+            "Great For": [
+                "Larger, one-time purchases",
+                "Home renovations",
+                "New appliances",
+                "Debt consolidation"
+            ]
+        },
+        {
+            "id": "L002",
+            "Name": "Secured Installment Loan",
+            "Title": "Enjoy Real Flexibility:",
+            "Description": "A Secured Line of Credit from FNB1 gives you the flexibility to borrow up to your credit limit at any time. Whether you use your line for overdraft protection or just as a cushion for those unexpected expenses, a line of credit provides you the borrowing power you need to help meet life's financial demands.",
+            "Key Features": [
+                "Secured with an FNB Savings Account or Certificate of Deposit2",
+                "Flexibility to borrow as needed, repay and borrow again up to your credit limit3",
+                "Borrow up to $250,0004",
+                "Variable interest rate tied to the U.S. Prime Rate5",
+                "Access your funds via check or online transfer"
+            ],
+            "Great For": [
+                "Providing overdraft protection for your checking account",
+                "Covering unexpected expenses",
+                "Providing liquidity to bridge the gap between when your bills are due and when you get paid"
+            ]
+        },
+        {
+            "id": "CC003",
+            "Name": "FNB SmartRateSM Credit Card",
+            "Title": "Get More Savings with Lower Rates",
+            "Description": "With the FNB SmartRate Card, you can get more savings with our lowest interest rate. You can use your card anywhere Visa is accepted to conduct everyday purchases. For added convenience, consolidate your monthly bills on one statement for one monthly payment.",
+            "Key Features": [
+                "No Annual Fee (Please review rates and fees in the pricing information link below for costs associated with this credit card)",
+                "Competitive Variable APR"
+            ],
+            "Great For": [
+                "Everyday purchases, from groceries to gas to monthly bills",
+                "Consolidating your monthly expenses on one convenient monthly bill",
+                "Saving on interest every time you use your card to make a purchase"
+            ]
+        }
+    ]
+}

@@ -1,0 +1,31 @@
+[build-system]
+requires = ["poetry-core>=1.7.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+name = "reinvent-bedrock-workshop"
+version = "0.2.0"
+description = "Bedrock & prompt engineering workshop for re:Invent-23"
+authors = [
+    "Philipp Kaindl <philikai@amazon.de>",
+    "Akarsha Sehwag <akshseh@amazon.de>",
+    "Olivier Boder <bodero@amazon.de>",
+    "Vikesh Pandey <pandvike@amazon.co.uk>",
+    "Tingyi Li <tingyity@amazon.com>", 
+]
+license = "Amazon Software License"
+
+[tool.poetry.dependencies]
+python = ">3.9.7,<3.10.0"
+Requests = "^2.31.0"
+boto3 = "~1.27.0"
+streamlit = "^1.26.0"
+st-pages = "~0.4.3"
+streamlit-extras = "~0.2.7"
+qrcode = "^7.4.2"
+rel = "^0.4.9"
+python-dotenv = "~1.0.0"
+pyjwt = "~2.7.0"
+
+
+

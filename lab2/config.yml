@@ -1,0 +1,27 @@
+# Settings for stack deployment
+# Choose the components you need for your demo, there should be only one value set to True per section
+
+stack_name: bdrkWorkshop # Name of your demo, will be used as stack name and prefix for resources
+
+authentication:
+  MFA: False # Set to True/False to enable/disable multi-factor authentication
+
+streamlit:
+  deploy_streamlit: True # Whether to deploy Streamlit frontend on ECS
+  open_to_public_internet: True # Opens the Application Load Balancer to the internet
+  # ip_address_allowed: [pl-4e2ece27] # List of IP addresses (cidr ranges) and prefix lists allowed to access the app in the ALB Security Group. If not set, SG is open to the internet
+  # For Amazon employees, please look at:
+  # https://dogfish.amazon.com/#/search?q=Unfabric&attr.scope=PublicIP for IP addresses
+  # https://w.amazon.com/bin/view/AmazonPrefixListLookup for Prefix lists
+  ecs_memory: 8192 # Memory of the ECS instance (Mb)
+  ecs_cpu: 4096 # CPU of ECS instance
+  cover_image_url: "https://reinvent.awsevents.com/content/dam/reinvent/2023/media/ripples/countdown-keyart.png" # default cover image on login page
+  cover_image_login_url: "https://reinvent.awsevents.com/content/dam/reinvent/2023/media/ripples/countdown-keyart.png"
+  assistant_avatar: "https://d1.awsstatic.com/products/bedrock/icon_64_amazonbedrock.302e08f0c3cd2a11d37eb3d77cb894bc5ceff8e4.png" # avatar of the chatbot (either URL or "assistant")
+
+bedrock:
+  region: "us-east-1" # Region of Amazon Bedrock
+
+cloudfront:
+  custom_header_name: "X-My-Custom-Header" # Name of the custom header to be used for authentication
+  custom_header_value: "aijfoiwjeoijfawioejfoiwajefoiwjeofiwoefjaoiwjefooijawefoij" # Value of the custom header to be used for authentication

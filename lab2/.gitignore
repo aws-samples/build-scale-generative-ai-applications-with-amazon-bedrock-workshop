@@ -1,0 +1,14 @@
+assets/streamlit/src/.env
+auxilary-assets/rsvps_GenAI-Prompting-Hackathon-EMEA_2023-10-06T12%3A03%3A45.352Z.xlsx
+auxilary-assets/RSVPS.csv
+auxilary-assets/RSVPS.xlsx
+.venv/
+**/cdk.out/
+**/.DS_Store
+**/__pycache__/
+cdk.context.json
+infra/constructs/.DS_Store
+infra/constructs/.DS_Store
+infra/stacks/.DS_Store
+requirements.txt
+infra/constructs/.DS_Store

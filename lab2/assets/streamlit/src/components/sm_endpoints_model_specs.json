@@ -1,0 +1,34 @@
+{
+    "falcon-7b-instruct-bf16": {
+        "MODEL_ID": "falcon-7b-instruct-bf16",
+        "NUM_DOCS_DEFAULT": 3,
+        "TEMPERATURE_DEFAULT": 0.1,
+        "ANSWER_LENGTH_DEFAULT": 200,
+        "DOC_LENGTH_DEFAULT": 1000,
+        "RELEVANCE_THRESHOLD_DEFAULT": 0.2
+    },
+    "falcon-40b-instruct-bf16": {
+        "MODEL_ID": "falcon-40b-instruct-bf16",
+        "NUM_DOCS_DEFAULT": 3,
+        "TEMPERATURE_DEFAULT": 0.1,
+        "ANSWER_LENGTH_DEFAULT": 200,
+        "DOC_LENGTH_DEFAULT": 1000,
+        "RELEVANCE_THRESHOLD_DEFAULT": 0.2
+    },
+    "meta-textgeneration-llama-2-7b-f": {
+        "MODEL_ID": "meta-textgeneration-llama-2-7b-f",
+        "NUM_DOCS_DEFAULT": 3,
+        "TEMPERATURE_DEFAULT": 0.1,
+        "ANSWER_LENGTH_DEFAULT": 200,
+        "DOC_LENGTH_DEFAULT": 1000,
+        "RELEVANCE_THRESHOLD_DEFAULT": 0.2
+    },
+    "meta-textgeneration-llama-2-13b-f": {
+        "MODEL_ID": "meta-textgeneration-llama-2-13b-f",
+        "NUM_DOCS_DEFAULT": 3,
+        "TEMPERATURE_DEFAULT": 0.1,
+        "ANSWER_LENGTH_DEFAULT": 200,
+        "DOC_LENGTH_DEFAULT": 1000,
+        "RELEVANCE_THRESHOLD_DEFAULT": 0.2
+    }
+}

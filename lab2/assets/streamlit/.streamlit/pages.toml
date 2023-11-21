@@ -1,0 +1,24 @@
+[[pages]]
+path="src/Home.py"
+name="Home"
+icon="🏠"
+
+[[pages]]
+path="src/app_pages/DataViewer.py"
+name="Data Viewer"
+icon="📖"
+
+[[pages]]
+path="src/app_pages/PromptEngineer.py"
+name="Prompt Engineering"
+icon="🪄"
+
+[[pages]]
+path="src/app_pages/PromptCatalog.py"
+name="Prompt Catalog"
+icon="📖"
+
+[[pages]]
+path="src/app_pages/EmailGenerationWizard.py"
+name="Email Generation Wizard"
+icon="🧙🏻‍♀️"

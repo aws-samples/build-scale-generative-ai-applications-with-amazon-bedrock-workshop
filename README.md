@@ -1,17 +1,18 @@
-## My Project
+# Build and scale Generative AI applications with Amazon Bedrock - Workshop
 
-TODO: Fill this README out!
+This project contains the source code for running the [**Build and scale Generative AI applications with Amazon Bedrock - Workshop**](http://linktoworkshop.com). It has two labs:
 
-Be sure to:
+1. Lab 1: This folder provides supporting files need to execute lab1 of the workshop.
+2. Lab 2: This folder provides the complete code for building a generative ai application and also the code for deploying the application to an AWS account.
 
-* Change the title in this README
-* Edit your repository description on GitHub
+## Pre-requisites
+1. Check the **Pre-requisites** section of the [Workshop](http://linktoworkshop.com)
 
-## Security
+## Contributions
+Please checkout [CONTRIBUTING.MD](CONTRIBUTING.MD).
 
-See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
+## LICENSE
+This project is licensed under MIT-0. For details, See [LICENSE](LICENSE).
 
-## License
-
-This library is licensed under the MIT-0 License. See the LICENSE file.
-
+## Issues
+Please use the [ISSUE_TEMPLATE](ISSUE_TEMPLATE.MD) to raise any issues for this repository.
