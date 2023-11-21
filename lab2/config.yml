@@ -20,7 +20,7 @@ streamlit:
   assistant_avatar: "https://d1.awsstatic.com/products/bedrock/icon_64_amazonbedrock.302e08f0c3cd2a11d37eb3d77cb894bc5ceff8e4.png" # avatar of the chatbot (either URL or "assistant")
 
 bedrock:
-  region: "us-east-1" # Region of Amazon Bedrock
+  region: "us-west-2" # Region of Amazon Bedrock
 
 cloudfront:
   custom_header_name: "X-My-Custom-Header" # Name of the custom header to be used for authentication

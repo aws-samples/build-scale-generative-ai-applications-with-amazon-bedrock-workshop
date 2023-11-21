@@ -14,14 +14,14 @@ You  need to add model access to Anthropic Claude (V2) and Amazon Titan (if poss
 The deployment of the application will take approximately 10 minutes. Once done it will show outputs like:
 
 ````
-bdrkReinventStack.AlbDnsName = internal-bdrkReinventStack-stl-priv-********.us-east-1.elb.amazonaws.com
+bdrkReinventStack.AlbDnsName = internal-bdrkReinventStack-stl-priv-********.us-west-2.elb.amazonaws.com
 bdrkReinventStack.BucketName = bdrkreinventstack-data-046676399357
-bdrkReinventStack.bdrkReinventStackAPIAPIEndpoint4FB601DD = https://ox3d8uym1g.execute-api.us-east-1.amazonaws.com
+bdrkReinventStack.bdrkReinventStackAPIAPIEndpoint4FB601DD = https://ox3d8uym1g.execute-api.us-west-2.amazonaws.com
 bdrkReinventStack.bdrkReinventStackAPICognitoClientID84CF997C = 2glsolf5tsd1j********
-bdrkReinventStack.bdrkReinventStackAPIWSAPIEndpoint38A1018F = wss://kode5g2jke.execute-api.us-east-1.amazonaws.com/Prod
+bdrkReinventStack.bdrkReinventStackAPIWSAPIEndpoint38A1018F = wss://kode5g2jke.execute-api.us-west-2.amazonaws.com/Prod
 bdrkReinventStack.cloudfrontdistributiondomainname = d36kltsvayb4ge.cloudfront.net
 Stack ARN:
-arn:aws:cloudformation:us-east-1:046676*****:stack/bdrkReinventStack/cad08e40-773d-11ee-a2e9-0e52*****
+arn:aws:cloudformation:us-west-2:046676*****:stack/bdrkReinventStack/cad08e40-773d-11ee-a2e9-0e52*****
 
 ✨  Total time: 467.83s
 ```
