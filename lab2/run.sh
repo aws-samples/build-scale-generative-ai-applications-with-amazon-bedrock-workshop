@@ -67,7 +67,7 @@ fi
 # End time and duration
 end_time_resize=$(date +%s)
 duration_resize=$((end_time_resize - start_time_resize))
-echo "Time taken to build everything: $duration_resize seconds"
+echo "Time taken to resize EBS Volume: $duration_resize seconds"
 
 # sleep for 60 seconds
 sleep 60 
