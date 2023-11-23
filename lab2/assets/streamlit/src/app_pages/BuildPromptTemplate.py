@@ -348,8 +348,6 @@ else:
         "If you like the output, save the prompt to the catalog which is ready to be applied for more customers in further steps."
     )
     with st.expander("Show Logs for the Bedrock invocation!"):
-        regions = ["us-west-2", "us-east-1"]
-        selected_region = st.selectbox("Select Region", regions)
         st.markdown(
             f"""
             To see the logs for the prompt, click on the link below:
