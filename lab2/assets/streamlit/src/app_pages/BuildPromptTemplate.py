@@ -1,5 +1,5 @@
 """
-Prompt Engineer Page
+Build Prompt Template Page
 """
 
 #########################
@@ -49,11 +49,11 @@ LOGGER.addHandler(HANDLER)
 
 # titles
 COVER_IMAGE = os.environ.get("COVER_IMAGE_URL")
-TITLE = "Prompt Engineering"
+TITLE = "Build Prompt Template"
 DESCRIPTION = "Build your own prompt template to generate marketing emails."
-PAGE_TITLE = "Prompt Engineering"
+PAGE_TITLE = "Build Prompt Template"
 PAGE_ICON = ":robot:"
-
+REGION = os.environ.get("REGION")
 # page config
 st.set_page_config(
     page_title=PAGE_TITLE,
@@ -247,14 +247,14 @@ if (
     "df_selected" not in st.session_state
     or st.session_state["df_selected"].shape[0] == 0
 ):
-    st.error("Please select a user on the 'Data Viewer' page first")
-    if st.button("Go to Data Viewer"):
-        switch_page("Data Viewer")
+    st.error("Please select a user on the 'Customer List' page first")
+    if st.button("Go to Customer List"):
+        switch_page("Customer List")
 
 else:
     st.markdown(
         """
-        This is your selected user from **Data Viewer** page. You can find different user attributes in the table displayed below. 
+        This is your selected user from **Customer List** page. You can find different user attributes in the table displayed below. 
         """
     )
 
@@ -347,6 +347,15 @@ else:
     st.markdown(
         "If you like the output, save the prompt to the catalog which is ready to be applied for more customers in further steps."
     )
+    with st.expander("Show Logs for the Bedrock invocation!"):
+        regions = ["us-west-2", "us-east-1"]
+        selected_region = st.selectbox("Select Region", regions)
+        st.markdown(
+            f"""
+            To see the logs for the prompt, click on the link below:
+            [Cloudwatch Logs](https://{selected_region}.console.aws.amazon.com/cloudwatch/home?region=us-east-1#logsV2:log-groups/log-group/%2Faws%2Flambda%2FbdrkWorkshop-bedrock-content-generation-lambda)
+            """
+        )
 
     st.session_state["model_output"] = model_output
 

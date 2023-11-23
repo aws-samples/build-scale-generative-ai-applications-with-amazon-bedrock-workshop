@@ -20,9 +20,9 @@ import requests
 
 API_URI = os.environ.get("API_URI")
 
-DEFAULT_NEGATIVE_ANSWER_QUESTION = "Could not answer based on the provided documents. Please rephrase your question, reduce the relevance threshold, or ask another question."  # noqa: E501
-DEFAULT_NEGATIVE_ANSWER_SUMMARY = "Could not summarize the document."  # noqa: E501
-WS_SSL = (os.environ.get("WS_SSL", "True")) == "True"
+# DEFAULT_NEGATIVE_ANSWER_QUESTION = "Could not answer based on the provided documents. Please rephrase your question, reduce the relevance threshold, or ask another question."  # noqa: E501
+# DEFAULT_NEGATIVE_ANSWER_SUMMARY = "Could not summarize the document."  # noqa: E501
+# WS_SSL = (os.environ.get("WS_SSL", "True")) == "True"
 
 #########################
 #    HELPER FUNCTIONS
@@ -49,16 +49,21 @@ def invoke_content_creation(
             "temperature": temperature,
         },
     }
-    response = requests.post(
-        url=API_URI + "/content/bedrock",
-        json=params,
-        stream=False,
-        headers={"Authorization": access_token},
-        timeout=60,  # add a timeout parameter of 10 seconds
-    )
-    print(response.text)
-    response = json.loads(response.text)
-    return response
+    try:
+        response = requests.post(
+            url=API_URI + "/content/bedrock",
+            json=params,
+            stream=False,
+            headers={"Authorization": access_token},
+            timeout=60,  # add a timeout parameter of 10 seconds
+        )
+        print(response)
+        # response.raise_for_status()  # This will raise an HTTPError if the HTTP request returned an unsuccessful status code
+        response = json.loads(response.text)
+        return response
+    except requests.RequestException as e:
+        # Handle exception as needed
+        raise ValueError(f"Error making request to LLM API: {str(e)}")
 
 
 def invoke_dynamo_put(

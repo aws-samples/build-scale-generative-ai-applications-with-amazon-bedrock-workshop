@@ -354,7 +354,7 @@ if st.session_state["authenticated"]:
     _, col, _ = st.columns([2, 1, 2], gap="large")
     with col:
         if st.button("Get Started", type="primary"):
-            switch_page("Data Viewer")
+            switch_page("Customer List")
 
 # page if password needs to be reset
 elif st.session_state["challenge"] == "NEW_PASSWORD_REQUIRED":
@@ -485,6 +485,7 @@ else:
                 label="Email",
             )
             st.session_state["user_email"] = email
+
             # password input field
             password = st.text_input(
                 key="password",
@@ -499,6 +500,11 @@ else:
                 placeholder="Repeat your password here",
                 label="Repeat Password",
                 type="password",
+            )
+
+            st.warning(
+                "**Note:** Your password should contain uppercase and lowercase letters, numbers, and special characters.",
+                icon="⚠️",
             )
 
             # register button

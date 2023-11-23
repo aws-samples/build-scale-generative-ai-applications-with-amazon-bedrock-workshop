@@ -4,13 +4,13 @@ name="Home"
 icon="🏠"
 
 [[pages]]
-path="src/app_pages/DataViewer.py"
-name="Data Viewer"
+path="src/app_pages/CustomerList.py"
+name="Customer List"
 icon="📖"
 
 [[pages]]
-path="src/app_pages/PromptEngineer.py"
-name="Prompt Engineering"
+path="src/app_pages/BuildPromptTemplate.py"
+name="Build Prompt Template"
 icon="🪄"
 
 [[pages]]

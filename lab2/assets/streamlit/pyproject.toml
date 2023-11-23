@@ -5,7 +5,7 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry]
 name = "reinvent-bedrock-workshop"
 version = "0.2.0"
-description = "Bedrock & prompt engineering workshop for re:Invent-23"
+description = "Bedrock & Build Prompt Template workshop for re:Invent-23"
 authors = [
     "Philipp Kaindl <philikai@amazon.de>",
     "Akarsha Sehwag <akshseh@amazon.de>",

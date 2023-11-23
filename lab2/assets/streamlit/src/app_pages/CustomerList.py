@@ -62,9 +62,9 @@ LOGGER.addHandler(HANDLER)
 # titles
 COVER_IMAGE = os.environ.get("COVER_IMAGE_URL")
 ASSISTANT_AVATAR = os.environ.get("ASSISTANT_AVATAR_URL")
-TITLE = "Data Viewer"
+TITLE = "Customer List"
 DESCRIPTION = "Explore the data that comes from the source systems. "
-PAGE_TITLE = "Data Viewer"
+PAGE_TITLE = "Customer List"
 PAGE_ICON = ":book:"
 
 # page config
@@ -110,7 +110,7 @@ if not st.session_state["authenticated"]:
 #########################
 
 # page name for caching
-PAGE_NAME = "DataViewer"
+PAGE_NAME = "Customer List"
 
 #########################
 # SESSION STATE VARIABLES
@@ -247,7 +247,7 @@ else:
     df = st.session_state["df"]
 
     # instruction
-    st.markdown("Select a user for prompt engineering experimentation.")
+    st.markdown("Select a user for Build Prompt Template experimentation.")
 
     selection = dataframe_with_selections(df)
     print(f"Selected user - {selection}")
@@ -265,7 +265,7 @@ else:
 
         if st.button("Continue with selected user", type="primary"):
             st.session_state["df_selected"] = selection
-            switch_page("Prompt Engineering")
+            switch_page("Build Prompt Template")
 
     if len(selection) > 1:
         st.error("Please only select one user.")
