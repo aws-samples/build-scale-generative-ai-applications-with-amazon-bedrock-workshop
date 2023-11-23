@@ -12,3 +12,4 @@ infra/constructs/.DS_Store
 infra/stacks/.DS_Store
 requirements.txt
 infra/constructs/.DS_Store
+assets/layers/bedrock-compatible-sdk.zip

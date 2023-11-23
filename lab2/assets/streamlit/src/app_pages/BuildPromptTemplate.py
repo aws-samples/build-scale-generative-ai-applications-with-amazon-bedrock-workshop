@@ -353,7 +353,7 @@ else:
         st.markdown(
             f"""
             To see the logs for the prompt, click on the link below:
-            [Cloudwatch Logs](https://{selected_region}.console.aws.amazon.com/cloudwatch/home?region=us-east-1#logsV2:log-groups/log-group/%2Faws%2Flambda%2FbdrkWorkshop-bedrock-content-generation-lambda)
+            [Cloudwatch Logs](https://console.aws.amazon.com/cloudwatch/home#logsV2:log-groups/log-group/$252Faws$252Flambda$252FbdrkWorkshop-bedrock-content-generation-lambda/)
             """
         )
 
