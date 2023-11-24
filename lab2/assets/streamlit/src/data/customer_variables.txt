@@ -1,0 +1,24 @@
+Address: Email address of the customer
+OptOut: Has the customer opted out of marketing emails from the bank
+User.UserId: User id of the customer in the bank
+User.UserAttributes.PreferredChannel: Preferred communication channel chosen by the customer(Email/SMS etc.)
+User.UserAttributes.CLVTier: The CLV (Customer Lifetime Value) tier of the customer. This depicts how much the bank can plan to earn from the customer over the course of the relationship
+User.UserAttributes.MemberClass: The tier of the customer class. Eg: Gold, Platinum, Silver, Bronze etc.
+User.UserAttributes.Stage: At which the customer is in terms of customer journey. Retention means the customer might churn and is staying because bank has offered retention offers. Usage means the customer is a just a regular user with no forecast of churn. Upsell means the bank see the customer as potential interest to sell new products.
+User.UserAttributes.FirstName: First name of the customer.
+User.UserAttributes.LastName: Last name of the customer.
+User.UserAttributes.Age: Age of the customer.
+User.UserAttributes.Job: The job title of the customer.
+User.UserAttributes.Marital: Marital status of the customer
+User.UserAttributes.Education: number of years of formal education for the customer
+User.UserAttributes.DefaultScore: What the default score prediction for the customer. Higher means higher chance of defaulting
+User.UserAttributes.Housing: How many active home loans the customer has
+User.UserAttributes.Income: Annual income of the customer
+User.UserAttributes.Product: Id of the Recommended lending product, to be promoted to the customer
+User.UserAttributes.PreferredLanguage: Preferred language of communication chosen by the customer
+Attributes.LastEngagement: Number of days since last interacted/engaged with the customer.
+Metrics.ChurnPrediction: The probability of customer leaving the bank
+Metrics.UpsellPrediction: The probablity the customer will buy a new product if offered.
+Metrics.OptimalSendHour: Optimal hour of the day for contacting via email.
+Demographic.Timezone: Timezone the customer is in.
+Demographic.Locale: Language/Locale of the customer
