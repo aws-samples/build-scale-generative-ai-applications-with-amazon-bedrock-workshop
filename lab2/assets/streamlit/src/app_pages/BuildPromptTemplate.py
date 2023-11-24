@@ -357,6 +357,24 @@ else:
 
     st.session_state["model_output"] = model_output
 
+    # add a line break for spacing
+    st.markdown("---")
+
+    with st.expander(
+        "Pick a random user to check if your prompt template generalizes well:"
+    ):
+        if st.button("Pick a random user"):
+            current_user_id = st.session_state["df_selected"]["User.UserId"].item()
+            df_tmp = st.session_state["df"]
+            df_excl_curr_user = df_tmp[df_tmp["User.UserId"] != current_user_id]
+            df_selection_new = df_excl_curr_user.sample(n=1)
+            st.session_state["df_selected"] = df_selection_new
+            st.markdown(
+                f"Randomly selected user: **{st.session_state['df_selected']['User.UserAttributes.FirstName'].iloc[0]} {st.session_state['df_selected']['User.UserAttributes.LastName'].iloc[0]}**"
+            )
+            st.write(
+                "head back up to the prompt template to see how your prompt template performs! "
+            )
 #########################
 #        FOOTNOTE
 #########################

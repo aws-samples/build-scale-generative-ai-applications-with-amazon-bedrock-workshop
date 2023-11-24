@@ -1,5 +1,5 @@
 """
-Lambda that performs summarization with Bedrock
+Lambda that performs email content generation with Bedrock
 """
 
 #########################
