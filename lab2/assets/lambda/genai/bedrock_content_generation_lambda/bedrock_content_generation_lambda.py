@@ -30,6 +30,7 @@ BEDROCK_CONFIG = Config(connect_timeout=60, read_timeout=60, retries={"max_attem
 MODELS_MAPPING = {
     "Bedrock: Amazon Titan": "amazon.titan-text-express-v1",
     "Bedrock: Claude V2": "anthropic.claude-v2",
+    "Bedrock: Claude 3 Sonnet": "anthropic.claude-3-sonnet-20240229-v1:0"
 }
 
 
@@ -95,7 +96,11 @@ def lambda_handler(event, context):
     MODEL_ID = MODELS_MAPPING[model_params_value["model_id"]]
     LOGGER.info(f"MODEL_ID: {MODEL_ID}")
 
-    with open(f"model_configs/{MODEL_ID}.json") as f:
+    if "claude-3" in MODEL_ID:
+        model_config_path = f"model_configs/{MODEL_ID[:-2]}.json"
+    else:
+        model_config_path = f"model_configs/{MODEL_ID}.json"
+    with open(model_config_path) as f:
         fixed_params = json.load(f)
 
     # load variable model params
@@ -109,6 +114,18 @@ def lambda_handler(event, context):
             "topP": fixed_params["TOP_P"],
         }
         amazon_flag = True
+    elif "claude-3" in MODEL_ID:
+        model_params = {
+            "max_tokens": model_params_value["answer_length"],
+            "temperature": model_params_value["temperature"],
+            "top_p": fixed_params["TOP_P"],
+        }
+        message = {"role": "user",
+                   "content": [
+                       {"type": "text", "text": query_value}
+                   ]
+                   }
+        messages = [message]
     elif MODEL_ID.startswith("anthropic"):
         model_params = {
             "max_tokens_to_sample": model_params_value["answer_length"],
@@ -139,7 +156,13 @@ def lambda_handler(event, context):
         response = BEDROCK_CLIENT.invoke_model(
             body=input_data, modelId=MODEL_ID, accept=accept, contentType=contentType
         )
-
+    elif "claude-3" in MODEL_ID:
+        body = json.dumps({
+            "anthropic_version": "bedrock-2023-05-31",
+            "messages": messages,
+            **model_params
+            })
+        response = BEDROCK_CLIENT.invoke_model(body=body, modelId=MODEL_ID)
     else:
         body = json.dumps({"prompt": query_value, **model_params})
         response = BEDROCK_CLIENT.invoke_model(body=body, modelId=MODEL_ID, accept=accept, contentType=contentType)
@@ -148,6 +171,8 @@ def lambda_handler(event, context):
 
     if "amazon" in MODEL_ID:
         response = response_body.get("results")[0].get("outputText")
+    elif "claude-3" in MODEL_ID:
+        response = response_body.get("content")[0].get("text")
     elif "anthropic" in MODEL_ID:
         response = response_body.get("completion")
     else:
