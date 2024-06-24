@@ -129,7 +129,7 @@ echo "Zipped the layer. Current directory is $PWD"
 
 # Cleanup (optional)
 conda deactivate
-conda env remove -n lambda_layer_env
+conda env remove -n lambda_layer_env -y
 
 
 # End time and duration
