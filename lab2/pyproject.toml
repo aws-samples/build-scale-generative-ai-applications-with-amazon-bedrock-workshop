@@ -30,7 +30,7 @@ aws-lambda-powertools = {extras = ["validation"], version = "^2.25.1"}
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.3.3"
-black = "^23.7.0"
+black = "^24.3.0"
 ruff = "^0.0.282"
 isort = "^5.12.0"
 ipykernel = "^6.25.2"
