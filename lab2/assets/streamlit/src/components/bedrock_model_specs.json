@@ -7,14 +7,14 @@
     "DOC_LENGTH_DEFAULT": 1000,
     "RELEVANCE_THRESHOLD_DEFAULT": 0.2
   },
-  "Bedrock: Claude V2": {
-    "MODEL_ID": "anthropic.claude-v2",
-    "NUM_DOCS_DEFAULT": 5,
-    "TEMPERATURE_DEFAULT": 0.0,
-    "ANSWER_LENGTH_DEFAULT": 200,
-    "DOC_LENGTH_DEFAULT": 1000,
-    "RELEVANCE_THRESHOLD_DEFAULT": 0.2
-  },
+  // "Bedrock: Claude V2": {
+  //   "MODEL_ID": "anthropic.claude-v2",
+  //   "NUM_DOCS_DEFAULT": 5,
+  //   "TEMPERATURE_DEFAULT": 0.0,
+  //   "ANSWER_LENGTH_DEFAULT": 200,
+  //   "DOC_LENGTH_DEFAULT": 1000,
+  //   "RELEVANCE_THRESHOLD_DEFAULT": 0.2
+  // },
   "Bedrock: Claude 3 Sonnet": {
     "MODEL_ID": "anthropic.claude-3-sonnet-20240229-v1:0",
     "NUM_DOCS_DEFAULT": 5,

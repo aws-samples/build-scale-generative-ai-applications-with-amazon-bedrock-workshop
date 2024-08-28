@@ -29,7 +29,7 @@ BEDROCK_CONFIG = Config(connect_timeout=60, read_timeout=60, retries={"max_attem
 
 MODELS_MAPPING = {
     "Bedrock: Amazon Titan": "amazon.titan-text-express-v1",
-    "Bedrock: Claude V2": "anthropic.claude-v2",
+    # "Bedrock: Claude V2": "anthropic.claude-v2",
     "Bedrock: Claude 3 Sonnet": "anthropic.claude-3-sonnet-20240229-v1:0"
 }
 
