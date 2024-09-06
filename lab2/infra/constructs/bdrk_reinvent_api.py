@@ -4,17 +4,15 @@ bdrk_reinvent API constructs
 
 import aws_cdk.aws_apigatewayv2_alpha as _apigw
 import aws_cdk.aws_apigatewayv2_integrations_alpha as _integrations
-from aws_cdk import aws_apigateway
 from aws_cdk import Aws, CfnOutput, Duration, RemovalPolicy
 from aws_cdk import aws_cognito as cognito
 from aws_cdk import aws_dynamodb as ddb
-from aws_cdk import aws_sns as sns
 from aws_cdk import aws_iam as iam
+from aws_cdk import aws_kms as kms
 from aws_cdk import aws_lambda as _lambda
 from aws_cdk import aws_logs as logs
-from aws_cdk import custom_resources as cr
+from aws_cdk import aws_sns as sns
 from aws_cdk.aws_apigatewayv2_authorizers_alpha import HttpUserPoolAuthorizer
-from aws_cdk import aws_kms as kms
 from constructs import Construct
 
 QUERY_BEDROCK_TIMEOUT = 900
@@ -29,7 +27,7 @@ class bdrk_reinventAPIConstructs(Construct):
         # s3_data_bucket: _s3.Bucket,
         layers: Construct,
         bedrock_region: str,
-        bedrock_role_arn: str = None,
+        bedrock_role_arn: str = "",
         mfa_enabled: bool = True,
         **kwargs,
     ) -> None:
@@ -46,7 +44,7 @@ class bdrk_reinventAPIConstructs(Construct):
         self.prefix = stack_name[:16]
         self.create_cognito_user_pool(mfa_enabled)
 
-        ## **************** Create resources ****************
+        # **************** Create resources ****************
         self.create_dynamodb()
         self.create_sns_topic()
         self.create_roles()
@@ -65,7 +63,8 @@ class bdrk_reinventAPIConstructs(Construct):
             description="API Endpoint",
             value=self.api_uri,
         )
-        CfnOutput(self, "Cognito Client ID", description="Cognito Client ID", value=self.client_id)
+        CfnOutput(self, "Cognito Client ID",
+                  description="Cognito Client ID", value=self.client_id)
 
     def create_http_api(self):
         log_group = logs.LogGroup(
@@ -92,7 +91,7 @@ class bdrk_reinventAPIConstructs(Construct):
             path="/content/bedrock",
             methods=[_apigw.HttpMethod.POST],
             integration=_integrations.HttpLambdaIntegration(
-                "LambdaProxyIntegration", handler=self.bedrock_content_generation_lambda
+                "LambdaProxyIntegration", handler=self.bedrock_content_generation_lambda  # type: ignore
             ),
         )
 
@@ -100,28 +99,32 @@ class bdrk_reinventAPIConstructs(Construct):
         http_api.add_routes(
             path="/dynamo/put",
             methods=[_apigw.HttpMethod.POST],
-            integration=_integrations.HttpLambdaIntegration("LambdaProxyIntegration", handler=self.prompt_ddb_lambda),
+            integration=_integrations.HttpLambdaIntegration(
+                "LambdaProxyIntegration", handler=self.prompt_management_lambda),  # type: ignore
         )
 
         # add dynamo/put to POST /
         http_api.add_routes(
             path="/dynamo/get",
             methods=[_apigw.HttpMethod.GET],
-            integration=_integrations.HttpLambdaIntegration("LambdaProxyIntegration", handler=self.prompt_ddb_lambda),
+            integration=_integrations.HttpLambdaIntegration(
+                "LambdaProxyIntegration", handler=self.prompt_management_lambda),  # type: ignore
         )
 
         # add dynamo/put to POST /
         http_api.add_routes(
             path="/dynamo/delete",
             methods=[_apigw.HttpMethod.DELETE],
-            integration=_integrations.HttpLambdaIntegration("LambdaProxyIntegration", handler=self.prompt_ddb_lambda),
+            integration=_integrations.HttpLambdaIntegration(
+                "LambdaProxyIntegration", handler=self.prompt_management_lambda),  # type: ignore
         )
 
         # add sns/put to POST /
         http_api.add_routes(
             path="/sns/put",
             methods=[_apigw.HttpMethod.POST],
-            integration=_integrations.HttpLambdaIntegration("LambdaProxyIntegration", handler=self.sns_topic_lambda),
+            integration=_integrations.HttpLambdaIntegration(
+                "LambdaProxyIntegration", handler=self.sns_topic_lambda),  # type: ignore
         )
 
         self.api_uri = http_api.api_endpoint
@@ -169,13 +172,14 @@ class bdrk_reinventAPIConstructs(Construct):
 
         self.client_id = self.user_pool_client.user_pool_client_id
 
-    ## **************** DynamoDB ****************
+    # **************** DynamoDB ****************
     def create_dynamodb(self):
         self.chat_history_table = ddb.Table(
             self,
             f"{self.stack_name}-chat-history",
             table_name=f"{self.stack_name}-chat-history",
-            partition_key=ddb.Attribute(name="SessionId", type=ddb.AttributeType.STRING),
+            partition_key=ddb.Attribute(
+                name="SessionId", type=ddb.AttributeType.STRING),
             table_class=ddb.TableClass.STANDARD,
             billing_mode=ddb.BillingMode("PAY_PER_REQUEST"),
             removal_policy=RemovalPolicy.DESTROY,
@@ -186,15 +190,17 @@ class bdrk_reinventAPIConstructs(Construct):
             self,
             f"{self.stack_name}-prompt-db",
             # table_name=f"{self.stack_name}-prompts-db",
-            partition_key=ddb.Attribute(name="session_id", type=ddb.AttributeType.STRING),
-            # sort_key=ddb.Attribute(name="Industry", type=ddb.AttributeType.STRING),
+            partition_key=ddb.Attribute(
+                name="user_id", type=ddb.AttributeType.STRING),
+            sort_key=ddb.Attribute(
+                name="prompt_id", type=ddb.AttributeType.STRING),
             table_class=ddb.TableClass.STANDARD,
             billing_mode=ddb.BillingMode("PAY_PER_REQUEST"),
             removal_policy=RemovalPolicy.DESTROY,
             point_in_time_recovery=True,
         )
 
-    ## **************** Create SNS Topic ****************
+    # **************** Create SNS Topic ****************
     def create_sns_topic(self):
         # Create a new KMS Key for encryption
         self.kms_key = kms.Key(
@@ -209,17 +215,19 @@ class bdrk_reinventAPIConstructs(Construct):
             self,
             "EmailTopic",
             topic_name=f"{self.stack_name}-email-topic",
-            master_key=self.kms_key,  # Use the created KMS key for encryption
+            master_key=self.kms_key,  # Use the created KMS key for encryption # type: ignore
         )
 
-    ## **************** Lambda Functions ****************
+    # **************** Lambda Functions ****************
     def create_lambda_functions(self):
-        ## ********* Bedrock *********
+        # ********* Bedrock *********
+
         self.bedrock_content_generation_lambda = _lambda.Function(
             self,
             f"{self.stack_name}-bedrock-content-generation-lambda",
             runtime=_lambda.Runtime.PYTHON_3_9,
-            code=_lambda.Code.from_asset("./assets/lambda/genai/bedrock_content_generation_lambda"),
+            code=_lambda.Code.from_asset(
+                "./assets/lambda/genai/bedrock_content_generation_lambda"),
             handler="bedrock_content_generation_lambda.lambda_handler",
             function_name=f"{self.stack_name}-bedrock-content-generation-lambda",
             memory_size=3008,
@@ -228,9 +236,9 @@ class bdrk_reinventAPIConstructs(Construct):
                 "BEDROCK_REGION": self.bedrock_region,
                 "BEDROCK_ROLE_ARN": str(self.bedrock_role_arn),
             },
-            role=self.bedrock_content_generation_role,
+            role=self.bedrock_content_generation_role,  # type: ignore
             layers=[
-                self.layers.bedrock_compatible_sdk,
+                self.layers.bedrock_compatible_sdk,  # type: ignore
             ],
         )
         self.bedrock_content_generation_lambda.add_alias(
@@ -239,28 +247,33 @@ class bdrk_reinventAPIConstructs(Construct):
             description="Alias used for Lambda provisioned concurrency",
         )
 
-        ## ********* Dynamo connection DDB *********
-        self.prompt_ddb_lambda = _lambda.Function(
+        # ********* Bedrock Prompt Management *********
+        self.prompt_management_lambda = _lambda.Function(
             self,
-            f"{self.stack_name}-prompt-ddb-lambda",
-            runtime=_lambda.Runtime.PYTHON_3_11,
-            code=_lambda.Code.from_asset("./assets/lambda/db_connections/prompt_lambda"),
+            f"{self.stack_name}-prompt-management-lambda",
+            runtime=_lambda.Runtime.PYTHON_3_9,
+            code=_lambda.Code.from_asset(
+                "./assets/lambda/db_connections/prompt_lambda"),
             handler="prompt_lambda.lambda_handler",
             function_name=f"{self.stack_name}-prompt-lambda",
             memory_size=3008,
             timeout=Duration.seconds(20),
             environment={
                 "TABLE_NAME": self.prompts_table.table_name,
+                "BEDROCK_REGION": self.bedrock_region
             },
-            role=self.lambda_DDB_role,
+            layers=[
+                self.layers.bedrock_compatible_sdk,  # type: ignore
+            ],
+            role=self.lambda_prompt_management_role,  # type: ignore
         )
-        self.prompt_ddb_lambda.add_alias(
+        self.prompt_management_lambda.add_alias(
             "Warm",
             provisioned_concurrent_executions=0,
             description="Alias used for Lambda provisioned concurrency",
         )
 
-        ## ********* SNS Topic Lambda *********
+        # ********* SNS Topic Lambda *********
         self.sns_topic_lambda = _lambda.Function(
             self,
             f"{self.stack_name}-sns-topic-lambda",
@@ -273,26 +286,26 @@ class bdrk_reinventAPIConstructs(Construct):
             environment={
                 "SNS_TOPIC_ARN": self.sns_topic.topic_arn,
             },
-            role=self.sns_topic_role,
+            role=self.sns_topic_role,  # type: ignore
         )
 
-    ## **************** IAM Permissions ****************
-    def create_roles(self: str):
-        ## ********* IAM Roles *********
+    # **************** IAM Permissions ****************
+    def create_roles(self):
+        # ********* IAM Roles *********
         self.bedrock_content_generation_role = iam.Role(
             self,
             f"{self.stack_name}-bedrock-content-generation-role",
             role_name=f"{self.stack_name}-bedrock-content-generation-role",
             assumed_by=iam.CompositePrincipal(
-                iam.ServicePrincipal("lambda.amazonaws.com"),
+                iam.ServicePrincipal("lambda.amazonaws.com"),  # type: ignore
             ),
         )
-        self.lambda_DDB_role = iam.Role(
+        self.lambda_prompt_management_role = iam.Role(
             self,
-            f"{self.stack_name}-DDB-role",
-            role_name=f"{self.stack_name}-DDB-role",
+            f"{self.stack_name}-prompt-management-role",
+            role_name=f"{self.stack_name}-prompt-management-role",
             assumed_by=iam.CompositePrincipal(
-                iam.ServicePrincipal("lambda.amazonaws.com"),
+                iam.ServicePrincipal("lambda.amazonaws.com"),  # type: ignore
             ),
         )
 
@@ -301,11 +314,11 @@ class bdrk_reinventAPIConstructs(Construct):
             f"{self.stack_name}-sns-topic-role",
             role_name=f"{self.stack_name}-sns-topic-role",
             assumed_by=iam.CompositePrincipal(
-                iam.ServicePrincipal("lambda.amazonaws.com"),
+                iam.ServicePrincipal("lambda.amazonaws.com"),  # type: ignore
             ),
         )
 
-        ## ********* Cloudwatch *********
+        # ********* Cloudwatch *********
         # Content Gen
         cloudwatch_access_docpolicy_content_gen = iam.PolicyDocument(
             statements=[
@@ -313,7 +326,8 @@ class bdrk_reinventAPIConstructs(Construct):
                 iam.PolicyStatement(
                     effect=iam.Effect.ALLOW,
                     actions=["logs:CreateLogGroup"],
-                    resources=[f"arn:aws:logs:{Aws.REGION}:{Aws.ACCOUNT_ID}:*"],
+                    resources=[
+                        f"arn:aws:logs:{Aws.REGION}:{Aws.ACCOUNT_ID}:*"],
                 ),
                 # Allow creating log streams and putting log events for specific Lambda functions
                 iam.PolicyStatement(
@@ -333,12 +347,19 @@ class bdrk_reinventAPIConstructs(Construct):
             document=cloudwatch_access_docpolicy_content_gen,
         )
 
-        # Prompt DDB
-        cloudwatch_access_doc_policy_prompt_ddb = iam.PolicyDocument(
+        # Prompt Management
+        cloudwatch_access_doc_policy_prompt_management = iam.PolicyDocument(
             statements=[
+                # Allow creating log groups at the account and region level
                 iam.PolicyStatement(
                     effect=iam.Effect.ALLOW,
-                    actions=["logs:CreateLogStream", "logs:PutLogEvents", "logs:CreateLogGroup"],
+                    actions=["logs:CreateLogGroup"],
+                    resources=[
+                        f"arn:aws:logs:{Aws.REGION}:{Aws.ACCOUNT_ID}:*"],
+                ),
+                iam.PolicyStatement(
+                    effect=iam.Effect.ALLOW,
+                    actions=["logs:CreateLogStream", "logs:PutLogEvents"],
                     resources=[
                         f"arn:aws:logs:{Aws.REGION}:{Aws.ACCOUNT_ID}:log-group:/aws/lambda/{self.stack_name}-prompt-lambda"
                     ],
@@ -346,11 +367,11 @@ class bdrk_reinventAPIConstructs(Construct):
             ]
         )
 
-        cloudwatch_access_policy_prompt_ddb = iam.Policy(
+        cloudwatch_access_policy_prompt_management = iam.Policy(
             self,
-            f"{self.stack_name}-cloudwatch-access-policy-prompt-ddb",
-            policy_name=f"{self.stack_name}-cloudwatch-access-policy-prompt-ddb",
-            document=cloudwatch_access_doc_policy_prompt_ddb,
+            f"{self.stack_name}-cloudwatch-access-policy-prompt-management",
+            policy_name=f"{self.stack_name}-cloudwatch-access-policy-prompt-management",
+            document=cloudwatch_access_doc_policy_prompt_management,
         )
 
         # SNS Topic
@@ -360,7 +381,8 @@ class bdrk_reinventAPIConstructs(Construct):
                 iam.PolicyStatement(
                     effect=iam.Effect.ALLOW,
                     actions=["logs:CreateLogGroup"],
-                    resources=[f"arn:aws:logs:{Aws.REGION}:{Aws.ACCOUNT_ID}:*"],
+                    resources=[
+                        f"arn:aws:logs:{Aws.REGION}:{Aws.ACCOUNT_ID}:*"],
                 ),
                 # Allow creating log streams and putting log events for specific Lambda functions
                 iam.PolicyStatement(
@@ -379,12 +401,15 @@ class bdrk_reinventAPIConstructs(Construct):
             policy_name=f"{self.stack_name}-cloudwatch-access-policy-sns-topic",
             document=cloudwatch_access_doc_sns_topic,
         )
-        self.bedrock_content_generation_role.attach_inline_policy(cloudwatch_access_policy_content)
-        self.lambda_DDB_role.attach_inline_policy(cloudwatch_access_policy_prompt_ddb)
-        self.sns_topic_role.attach_inline_policy(cloudwatch_access_policy_sns_topic)
+        self.bedrock_content_generation_role.attach_inline_policy(
+            cloudwatch_access_policy_content)
+        self.lambda_prompt_management_role.attach_inline_policy(
+            cloudwatch_access_policy_prompt_management)
+        self.sns_topic_role.attach_inline_policy(
+            cloudwatch_access_policy_sns_topic)
 
-        ## ********* DynamoDB *********
-        prompt_db_docpolicy = iam.PolicyDocument(
+        # ********* Bedrock Prompt Management *********
+        prompt_management_docpolicy = iam.PolicyDocument(
             statements=[
                 iam.PolicyStatement(
                     actions=[
@@ -393,25 +418,61 @@ class bdrk_reinventAPIConstructs(Construct):
                         "dynamodb:DeleteItem",
                         "dynamodb:UpdateItem",
                         "dynamodb:Scan",
+                        "dynamodb:Query",
                     ],
                     resources=[
                         self.prompts_table.table_arn,
                     ],
+                ),
+                iam.PolicyStatement(
+                    actions=[
+                        "bedrock:CreatePrompt",
+                        "bedrock:UpdatePrompt",
+                        "bedrock:GetPrompt",
+                        "bedrock:ListPrompts",
+                        "bedrock:DeletePrompt",
+                        "bedrock:CreatePromptVersion",
+                        "bedrock:GetFoundationModel",
+                        "bedrock:ListFoundationModels",
+                        "bedrock:Converse",
+                        "bedrock:ConverseStream",
+                        "bedrock:TagResource",
+                        "bedrock:UntagResource",
+                        "bedrock:ListTagsForResource",
+                        "bedrock:CreateFlow",
+                        "bedrock:UpdateFlow",
+                        "bedrock:GetFlow",
+                        "bedrock:ListFlows",
+                        "bedrock:DeleteFlow",
+                        "bedrock:CreateFlowVersion",
+                        "bedrock:GetFlowVersion",
+                        "bedrock:ListFlowVersions",
+                        "bedrock:DeleteFlowVersions",
+                        "bedrock:CreateFlowAlias",
+                        "bedrock:UpdateFlowAlias",
+                        "bedrock:GetFlowAlias",
+                        "bedrock:ListFlowAliases",
+                        "bedrock:DeleteFlowAlias",
+                        "bedrock:InvokeFlow",
+                    ],
+                    resources=["*"],
                 )
             ]
         )
-        prompt_db_policy = iam.Policy(
+        prompt_management_policy = iam.Policy(
             self,
-            f"{self.stack_name}-prompt_db_policy",
-            policy_name=f"{self.stack_name}-prompt_db_policy",
-            document=prompt_db_docpolicy,
+            f"{self.stack_name}-prompt_management_policy",
+            policy_name=f"{self.stack_name}-prompt_management_policy",
+            document=prompt_management_docpolicy,
         )
-        self.lambda_DDB_role.attach_inline_policy(prompt_db_policy)
-        ## ********* SNS Topic *********
+        self.lambda_prompt_management_role.attach_inline_policy(
+            prompt_management_policy)
+        # ********* SNS Topic *********
         sns_topic_docpolicy = iam.PolicyDocument(
             statements=[
                 iam.PolicyStatement(
-                    actions=["sns:Publish", "sns:Subscribe", "sns:ListSubscriptionsByTopic"],
+                    actions=["sns:Publish", "sns:Subscribe",
+                             "sns:ListSubscriptionsByTopic"],
                     resources=[
                         self.sns_topic.topic_arn,
                     ],
@@ -433,7 +494,7 @@ class bdrk_reinventAPIConstructs(Construct):
         )
         self.sns_topic_role.attach_inline_policy(sns_topic_policy)
 
-        ## ********* Bedrock *********
+        # ********* Bedrock *********
         bedrock_access_docpolicy = iam.PolicyDocument(
             statements=[
                 iam.PolicyStatement(
@@ -446,7 +507,8 @@ class bdrk_reinventAPIConstructs(Construct):
                     actions=[
                         "bedrock:InvokeModel",
                     ],
-                    resources=[f"arn:aws:bedrock:{Aws.REGION}::foundation-model/*"],
+                    resources=[
+                        f"arn:aws:bedrock:{Aws.REGION}::foundation-model/*"],
                 ),
             ]
         )
@@ -457,4 +519,5 @@ class bdrk_reinventAPIConstructs(Construct):
             policy_name=f"{self.stack_name}-bedrock-access-policy",
             document=bedrock_access_docpolicy,
         )
-        self.bedrock_content_generation_role.attach_inline_policy(bedrock_access_policy)
+        self.bedrock_content_generation_role.attach_inline_policy(
+            bedrock_access_policy)
