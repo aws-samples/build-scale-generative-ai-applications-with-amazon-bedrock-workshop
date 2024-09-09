@@ -4,12 +4,9 @@ bdrk_reinvent stack
 
 from typing import Any, Dict
 
-from aws_cdk import Aws
 from aws_cdk import CfnOutput as output
-from aws_cdk import RemovalPolicy, Stack, Tags
-
+from aws_cdk import Stack, Tags
 from constructs import Construct
-
 from infra.constructs.bdrk_reinvent_api import bdrk_reinventAPIConstructs
 from infra.constructs.bdrk_reinvent_layers import bdrk_reinventLambdaLayers
 from infra.stacks.bdrk_reinvent_streamlit import bdrk_reinventStreamlitStack
@@ -25,13 +22,14 @@ class bdrkReinventStack(Stack):
     def __init__(self, scope: Construct, stack_name: str, config: Dict[str, Any], **kwargs) -> None:  # noqa: C901
         super().__init__(scope, stack_name, **kwargs)
 
-        ## **************** Lambda layers ****************
+        # **************** Lambda layers ****************
 
-        self.layers = bdrk_reinventLambdaLayers(self, f"{stack_name}-layers", stack_name=stack_name)
+        self.layers = bdrk_reinventLambdaLayers(
+            self, f"{stack_name}-layers", stack_name=stack_name)
 
-        ## ********** Bedrock configs ***********
+        # ********** Bedrock configs ***********
         bedrock_region = kwargs["env"].region
-        bedrock_role_arn = None
+        bedrock_role_arn = ""
 
         if "bedrock" in config:
             if "region" in config["bedrock"]:
@@ -39,13 +37,13 @@ class bdrkReinventStack(Stack):
                     kwargs["env"].region if config["bedrock"]["region"] == "None" else config["bedrock"]["region"]
                 )
 
-        ## ********** Authentication configs ***********
+        # ********** Authentication configs ***********
         mfa_enabled = True
         if "authentication" in config:
             if "MFA" in config["authentication"]:
                 mfa_enabled = config["authentication"]["MFA"]
 
-        ## **************** API Constructs  ****************
+        # **************** API Constructs  ****************
         self.api_constructs = bdrk_reinventAPIConstructs(
             self,
             f"{stack_name}-API",
@@ -56,7 +54,7 @@ class bdrkReinventStack(Stack):
             mfa_enabled=mfa_enabled,
         )
 
-        ## **************** Streamlit NestedStack ****************
+        # **************** Streamlit NestedStack ****************
         if config["streamlit"]["deploy_streamlit"]:
             self.streamlit_constructs = bdrk_reinventStreamlitStack(
                 self,
@@ -70,7 +68,8 @@ class bdrkReinventStack(Stack):
                 cover_image_login_url=config["streamlit"]["cover_image_login_url"],
                 assistant_avatar=config["streamlit"]["assistant_avatar"],
                 open_to_public_internet=config["streamlit"]["open_to_public_internet"],
-                ip_address_allowed=config["streamlit"].get("ip_address_allowed"),
+                ip_address_allowed=config["streamlit"].get(
+                    "ip_address_allowed"),
                 custom_header_name=config["cloudfront"]["custom_header_name"],
                 custom_header_value=config["cloudfront"]["custom_header_value"],
             )
@@ -87,6 +86,6 @@ class bdrkReinventStack(Stack):
                 value=self.streamlit_constructs.cloudfront.domain_name,
             )
 
-        ## **************** Tags ****************
+        # **************** Tags ****************
         Tags.of(self).add("StackName", stack_name)
         Tags.of(self).add("Team", "Bedrock Workshop")
