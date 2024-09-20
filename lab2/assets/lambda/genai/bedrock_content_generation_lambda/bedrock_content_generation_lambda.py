@@ -30,7 +30,7 @@ BEDROCK_CONFIG = Config(connect_timeout=60, read_timeout=60, retries={"max_attem
 MODELS_MAPPING = {
     "Bedrock: Amazon Titan": "amazon.titan-text-express-v1",
     "Bedrock: Claude V2": "anthropic.claude-v2",
-    "Bedrock: Claude 3 Sonnet": "anthropic.claude-3-sonnet-20240229-v1:0"
+    "Bedrock: Claude 3 Sonnet": "anthropic.claude-3-sonnet-20240229-v1:0",
 }
 
 
@@ -71,6 +71,37 @@ def verify_bedrock_client():
     return True
 
 
+def invoke_bedrock_model(client, id, prompt, max_tokens=2000, temperature=0, top_p=0.9):
+    response = ""
+    try:
+        response = client.converse(
+            modelId=id,
+            messages=[{"role": "user", "content": [{"text": prompt}]}],
+            inferenceConfig={"temperature": temperature, "maxTokens": max_tokens, "topP": top_p},
+            # additionalModelRequestFields={
+            # }
+        )
+    except Exception as e:
+        print(e)
+        result = "Model invocation error"
+    try:
+        result = (
+            response["output"]["message"]["content"][0]["text"]
+            + "\n--- Latency: "
+            + str(response["metrics"]["latencyMs"])
+            + "ms - Input tokens:"
+            + str(response["usage"]["inputTokens"])
+            + " - Output tokens:"
+            + str(response["usage"]["outputTokens"])
+            + " ---\n"
+        )
+        return result
+    except Exception as e:
+        print(e)
+        result = "Output parsing error"
+    return result
+
+
 #########################
 #        HANDLER
 #########################
@@ -91,92 +122,24 @@ def lambda_handler(event, context):
 
     # Extract the 'model_params' value
     model_params_value = body_data["model_params"]
+    max_tokens = model_params_value["answer_length"]
+    temperature = model_params_value["temperature"]
 
-    # get fixed model params
+    # get model id but check if the model is available in the mapping
+    model_id = model_params_value["model_id"]
+    if model_id not in MODELS_MAPPING:
+        return {
+            "statusCode": 400,
+            "body": json.dumps("Invalid model ID"),
+        }
     MODEL_ID = MODELS_MAPPING[model_params_value["model_id"]]
     LOGGER.info(f"MODEL_ID: {MODEL_ID}")
-
-    if "claude-3" in MODEL_ID:
-        model_config_path = f"model_configs/{MODEL_ID[:-2]}.json"
-    else:
-        model_config_path = f"model_configs/{MODEL_ID}.json"
-    with open(model_config_path) as f:
-        fixed_params = json.load(f)
-
-    # load variable model params
-    amazon_flag = False
-    model_params = {}
-    if MODEL_ID.startswith("amazon"):
-        model_params = {
-            "maxTokenCount": model_params_value["answer_length"],
-            "stopSequences": fixed_params["STOP_WORDS"],
-            "temperature": model_params_value["temperature"],
-            "topP": fixed_params["TOP_P"],
-        }
-        amazon_flag = True
-    elif "claude-3" in MODEL_ID:
-        model_params = {
-            "max_tokens": model_params_value["answer_length"],
-            "temperature": model_params_value["temperature"],
-            "top_p": fixed_params["TOP_P"],
-        }
-        message = {"role": "user",
-                   "content": [
-                       {"type": "text", "text": query_value}
-                   ]
-                   }
-        messages = [message]
-    elif MODEL_ID.startswith("anthropic"):
-        model_params = {
-            "max_tokens_to_sample": model_params_value["answer_length"],
-            "temperature": model_params_value["temperature"],
-            "top_p": fixed_params["TOP_P"],
-            "stop_sequences": fixed_params["STOP_WORDS"],
-        }
-        query_value = f"\n\nHuman:{query_value}\n\nAssistant:"
-
-    LOGGER.info(f"MODEL_PARAMS: {model_params}")
 
     if not verify_bedrock_client():
         LOGGER.info("Bedrock client expired, will refresh token.")
         global BEDROCK_CLIENT, EXPIRATION
         BEDROCK_CLIENT, EXPIRATION = create_bedrock_client()
 
-    accept = "application/json"
-    contentType = "application/json"
-
-    if amazon_flag == True:
-        input_data = json.dumps(
-            {
-                "inputText": query_value,
-                "textGenerationConfig": model_params,
-            }
-        )
-        print(input_data)
-        response = BEDROCK_CLIENT.invoke_model(
-            body=input_data, modelId=MODEL_ID, accept=accept, contentType=contentType
-        )
-    elif "claude-3" in MODEL_ID:
-        body = json.dumps({
-            "anthropic_version": "bedrock-2023-05-31",
-            "messages": messages,
-            **model_params
-            })
-        response = BEDROCK_CLIENT.invoke_model(body=body, modelId=MODEL_ID)
-    else:
-        body = json.dumps({"prompt": query_value, **model_params})
-        response = BEDROCK_CLIENT.invoke_model(body=body, modelId=MODEL_ID, accept=accept, contentType=contentType)
-
-    response_body = json.loads(response.get("body").read())
-
-    if "amazon" in MODEL_ID:
-        response = response_body.get("results")[0].get("outputText")
-    elif "claude-3" in MODEL_ID:
-        response = response_body.get("content")[0].get("text")
-    elif "anthropic" in MODEL_ID:
-        response = response_body.get("completion")
-    else:
-        LOGGER.info("Unknown model type!")
-    print("Responese: ", response)
+    response = invoke_bedrock_model(BEDROCK_CLIENT, MODEL_ID, query_value, max_tokens, temperature)
 
     return json.dumps(response)
