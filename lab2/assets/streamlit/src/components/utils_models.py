@@ -3,13 +3,11 @@ from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
 BEDROCK_MODELS = [
-    "Bedrock: Claude V2",
     "Bedrock: Claude 3 Sonnet",
     "Bedrock: Amazon Titan",
 ]
 # TODO - AFTER REINVENT - UNCOMMENT
 BEDROCK_MODELS_after_reinvent = [
-    "Bedrock: Claude V2",
     "Bedrock: Claude 3 Sonnet"
     "Bedrock: Claude Instant",
     "Bedrock: J2 Grande Instruct",
