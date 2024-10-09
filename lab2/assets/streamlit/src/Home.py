@@ -96,13 +96,13 @@ if st.session_state["authenticated"]:
             [data-testid="stSidebarNav"]::before {
                 content: "Application Tabs";
                 margin-left: 20px;
-                margin-top: 20px;
-                margin-bottom: 20px;
-                font-size: 22px;
+                margin-top: 25px;
+                font-size: 30px;
                 font-weight: bold;
                 position: relative;
-                top: 100px;
+                top: 10px;
             }
+
         </style>
         """,
         unsafe_allow_html=True,

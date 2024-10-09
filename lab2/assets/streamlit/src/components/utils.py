@@ -67,7 +67,7 @@ section.main > div {max-width:800px}
     font-size: 22px;
     font-weight: bold;
     position: relative;
-    top: 100px;
+    top:10px;
 }
 [data-testid="stExpander"] div:has(>.streamlit-expanderContent) {
         overflow: scroll;
@@ -350,7 +350,6 @@ def add_logo():
                 margin-top: 20px;
                 font-size: 30px;
                 position: relative;
-                top: 100px;
             }
         </style>
         """,
